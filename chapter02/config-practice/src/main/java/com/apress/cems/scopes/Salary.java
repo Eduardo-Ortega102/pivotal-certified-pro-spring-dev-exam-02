@@ -41,12 +41,11 @@ import java.util.Random;
  * @author Iuliana Cosmina
  * @since 1.0
  */
-// TODO 14. Redefine this bean to configure JDK interface based proxying. Add classes or interfaces necessary.
-// TODO. 15 Create a specialized version of the @Scope annotation you used on this bean to solve requirement 14.
 @Description("Salary for an employee might change, so this is a suitable example for a prototype scoped bean")
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class Salary {
+//@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.INTERFACES)
+@SalaryScope
+public class Salary implements SalaryInterface {
     private Logger logger = LoggerFactory.getLogger(Salary.class);
 
     private Integer amount;
@@ -57,6 +56,7 @@ public class Salary {
         this.amount = rand.nextInt(10_000) +  50_000;
     }
 
+    @Override
     public Integer getAmount() {
         return amount;
     }
