@@ -27,36 +27,37 @@ SOFTWARE.
 */
 package com.apress.cems.config;
 
-import com.apress.cems.pojos.repos.DetectiveRepo;
-import com.apress.cems.pojos.repos.EvidenceRepo;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.sql.DataSource;
 
 /**
  * @author Iuliana Cosmina
  * @since 1.0
  */
-// TODO 11. Modify this test class to use more than one configuration class
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {FullConfig.class})
-public class FullConfigTest {
+@Configuration
+@ComponentScan(basePackages =  {"com.apress.cems.repos"})
+@PropertySource("classpath:db/datasource.properties")
+public class DataSourceConfig {
+    @Value("${db.driverClassName}")
+    private String driverClassName;
+    @Value("${db.url}")
+    private String url;
+    @Value("${db.username}")
+    private String username;
+    @Value("${db.password}")
+    private String password;
 
-    @Autowired
-    EvidenceRepo evidenceRepo;
-
-    @Autowired
-    DetectiveRepo detectiveRepo;
-
-    @Test
-    public void testInjectedBeans(){
-        assertNotNull(evidenceRepo);
-        assertNotNull(detectiveRepo);
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName(driverClassName);
+        ds.setUrl(url);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        return ds;
     }
 
 }

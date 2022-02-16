@@ -28,44 +28,34 @@ SOFTWARE.
 package com.apress.cems.config;
 
 import com.apress.cems.pojos.repos.DetectiveRepo;
-import com.apress.cems.repos.JdbcDetectiveRepo;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import com.apress.cems.pojos.repos.EvidenceRepo;
 
-import javax.sql.DataSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Iuliana Cosmina
  * @since 1.0
  */
-// TODO 10. Split this configuration class in more configuration classes
-@Configuration
-@ComponentScan(basePackages =  {"com.apress.cems.repos"})
-@PropertySource("classpath:db/datasource.properties")
-public class FullConfig {
-    @Value("${db.driverClassName}")
-    private String driverClassName;
-    @Value("${db.url}")
-    private String url;
-    @Value("${db.username}")
-    private String username;
-    @Value("${db.password}")
-    private String password;
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {DataSourceConfig.class, RepositoryConfig.class})
+public class DataSourceConfigTest {
 
-    @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName(driverClassName);
-        ds.setUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        return ds;
+    @Autowired
+    EvidenceRepo evidenceRepo;
+
+    @Autowired
+    DetectiveRepo detectiveRepo;
+
+    @Test
+    public void testInjectedBeans(){
+        assertNotNull(evidenceRepo);
+        assertNotNull(detectiveRepo);
     }
 
-    @Bean
-    DetectiveRepo detectiveRepo(){
-        return new JdbcDetectiveRepo(dataSource());
-    }
 }
